@@ -76,7 +76,7 @@
             color: #000000;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .btn-download:hover {
+        .btn-download:hover, .btn-download:active {
             background-color: #88d450;
             box-shadow: 0 10px 25px -5px rgba(119, 196, 64, 0.5);
             transform: translateY(-2px);
@@ -84,10 +84,16 @@
 
         /* Ambient background grid - Deep Dark */
         .bg-grid {
-            background-size: 40px 40px;
+            background-size: 30px 30px;
             background-image: 
                 linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        @media (min-width: 640px) {
+            .bg-grid {
+                background-size: 40px 40px;
+            }
         }
 
         /* Deep Dark Mode Styles */
@@ -116,6 +122,11 @@
             const page404 = document.getElementById('page-404');
             const navAboutBtn = document.getElementById('nav-about-btn');
             const navHomeBtn = document.getElementById('nav-home-btn');
+            const mobileNavAboutBtn = document.getElementById('mobile-nav-about-btn');
+            const mobileNavHomeBtn = document.getElementById('mobile-nav-home-btn');
+
+            // Close mobile menu if open
+            closeMobileMenu();
 
             // Hide all pages first
             homePage.classList.add('hidden');
@@ -123,9 +134,13 @@
             page404.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
 
-            // Reset active indicators
+            // Reset active indicators desktop
             if (navAboutBtn) navAboutBtn.classList.remove('text-[#77C440]', 'font-bold');
             if (navHomeBtn) navHomeBtn.classList.remove('text-[#77C440]', 'font-bold');
+            
+            // Reset active indicators mobile
+            if (mobileNavAboutBtn) mobileNavAboutBtn.classList.remove('text-[#77C440]', 'bg-zinc-900');
+            if (mobileNavHomeBtn) mobileNavHomeBtn.classList.remove('text-[#77C440]', 'bg-zinc-900');
 
             if (pageId === '404') {
                 page404.classList.remove('hidden');
@@ -135,12 +150,42 @@
                 aboutPage.classList.remove('hidden');
                 window.location.hash = 'about';
                 if (navAboutBtn) navAboutBtn.classList.add('text-[#77C440]', 'font-bold');
+                if (mobileNavAboutBtn) mobileNavAboutBtn.classList.add('text-[#77C440]', 'bg-zinc-900');
             } else {
                 homePage.classList.remove('hidden');
                 window.location.hash = '';
                 if (navHomeBtn) navHomeBtn.classList.add('text-[#77C440]', 'font-bold');
+                if (mobileNavHomeBtn) mobileNavHomeBtn.classList.add('text-[#77C440]', 'bg-zinc-900');
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile Menu Toggle Logic
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                closeMobileMenu();
+            }
+        }
+
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            if (menu) {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            }
+            if (icon) {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
         }
 
         // Filter Softwares Logic
@@ -153,9 +198,9 @@
                 btn.classList.add('bg-zinc-900', 'text-zinc-400', 'border', 'border-zinc-800');
             });
 
-            if (event && event.target) {
-                event.target.classList.remove('bg-zinc-900', 'text-zinc-400', 'border', 'border-zinc-800');
-                event.target.classList.add('bg-[#77C440]', 'text-black', 'font-bold');
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.remove('bg-zinc-900', 'text-zinc-400', 'border', 'border-zinc-800');
+                event.currentTarget.classList.add('bg-[#77C440]', 'text-black', 'font-bold');
             }
 
             cards.forEach(card => {
@@ -214,19 +259,19 @@
 <body class="bg-black text-zinc-100 min-h-screen font-sans transition-colors duration-300 flex flex-col justify-between relative bg-grid">
 
     <!-- Header / Navigation -->
-    <header class="sticky top-0 z-50 bg-black/80 border-b border-zinc-900/90 backdrop-blur-md transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <header class="sticky top-0 z-50 bg-black/90 border-b border-zinc-900/90 backdrop-blur-md transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
             
             <!-- Logo Section -->
-            <div class="flex items-center gap-3 select-none cursor-pointer group" onclick="navigateTo('home')">
+            <div class="flex items-center gap-2 sm:gap-3 select-none cursor-pointer group" onclick="navigateTo('home')">
                 <img 
                     src="logo.png" 
                     alt="FreeX Logo" 
-                    class="h-10 sm:h-12 w-auto object-contain hover-logo-img"
+                    class="h-8 sm:h-12 w-auto object-contain hover-logo-img"
                     onerror="this.onerror=null; this.src='https://placehold.co/160x50/77C440/ffffff?text=FREEX';"
                 />
 
-                <div class="flex items-center text-3xl sm:text-4xl tracking-wide impact-font drop-shadow-sm py-2">
+                <div class="flex items-center text-2xl sm:text-4xl tracking-wide impact-font drop-shadow-sm py-2">
                     <span class="hover-letter letter-main">F</span>
                     <span class="hover-letter letter-main">R</span>
                     <span class="hover-letter letter-main">E</span>
@@ -235,26 +280,26 @@
                 </div>
             </div>
 
-            <!-- Navigation Links -->
-            <nav class="flex items-center gap-4 sm:gap-8">
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 lg:gap-8">
                 <button 
                     id="nav-home-btn"
                     onclick="navigateTo('home')" 
-                    class="text-zinc-400 font-semibold text-base sm:text-lg hover:text-[#77C440] transition-colors duration-200 text-[#77C440] font-bold"
+                    class="text-zinc-400 font-semibold text-base hover:text-[#77C440] transition-colors duration-200 text-[#77C440] font-bold"
                 >
                     Главная
                 </button>
                 <a 
                     href="#products" 
                     onclick="navigateTo('home')"
-                    class="text-zinc-400 font-semibold text-base sm:text-lg hover:text-[#77C440] transition-colors duration-200"
+                    class="text-zinc-400 font-semibold text-base hover:text-[#77C440] transition-colors duration-200"
                 >
                     Продукты
                 </a>
                 <button 
                     id="nav-about-btn"
                     onclick="navigateTo('about')" 
-                    class="text-zinc-400 font-semibold text-base sm:text-lg hover:text-[#77C440] transition-colors duration-200"
+                    class="text-zinc-400 font-semibold text-base hover:text-[#77C440] transition-colors duration-200"
                 >
                     О нас
                 </button>
@@ -262,11 +307,55 @@
                     href="https://github.com/FreeX-Company" 
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-bold bg-[#77C440] text-black hover:bg-[#88d450] transition-all duration-200 shadow-md shadow-[#77C440]/20 hover:scale-105"
+                    class="inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-bold bg-[#77C440] text-black hover:bg-[#88d450] transition-all duration-200 shadow-md shadow-[#77C440]/20 hover:scale-105"
                 >
                     <i class="fa-brands fa-github mr-2"></i> GitHub
                 </a>
             </nav>
+
+            <!-- Mobile Hamburger Button -->
+            <button 
+                onclick="toggleMobileMenu()" 
+                class="md:hidden p-2.5 rounded-xl text-zinc-300 hover:text-white bg-zinc-900 border border-zinc-800 focus:outline-none"
+                aria-label="Toggle Navigation Menu"
+            >
+                <i id="menu-icon" class="fa-solid fa-bars text-xl w-5 h-5 flex items-center justify-center"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Dropdown Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden flex-col border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-xl px-4 pt-3 pb-5 space-y-3">
+            <button 
+                id="mobile-nav-home-btn"
+                onclick="navigateTo('home')" 
+                class="w-full text-left px-4 py-3 rounded-xl text-zinc-300 font-semibold hover:bg-zinc-900 hover:text-[#77C440] transition-all text-base flex items-center gap-3"
+            >
+                <i class="fa-solid fa-house text-[#77C440]"></i> Главная
+            </button>
+            <a 
+                href="#products" 
+                onclick="navigateTo('home')"
+                class="w-full text-left px-4 py-3 rounded-xl text-zinc-300 font-semibold hover:bg-zinc-900 hover:text-[#77C440] transition-all text-base flex items-center gap-3"
+            >
+                <i class="fa-solid fa-layer-group text-[#77C440]"></i> Продукты
+            </a>
+            <button 
+                id="mobile-nav-about-btn"
+                onclick="navigateTo('about')" 
+                class="w-full text-left px-4 py-3 rounded-xl text-zinc-300 font-semibold hover:bg-zinc-900 hover:text-[#77C440] transition-all text-base flex items-center gap-3"
+            >
+                <i class="fa-solid fa-circle-info text-[#77C440]"></i> О нас
+            </button>
+            <div class="pt-2 border-t border-zinc-900">
+                <a 
+                    href="https://github.com/FreeX-Company" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="w-full py-3 px-4 rounded-xl text-sm font-bold bg-[#77C440] text-black hover:bg-[#88d450] flex items-center justify-center gap-2 shadow-lg transition-all"
+                >
+                    <i class="fa-brands fa-github text-base"></i> Наш GitHub
+                </a>
+            </div>
         </div>
     </header>
 
@@ -276,30 +365,30 @@
         <div class="absolute inset-0 glow-effect pointer-events-none transition-all duration-500"></div>
 
         <!-- Hero Section -->
-        <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 sm:pt-20 sm:pb-20 text-center">
+        <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 sm:pt-20 sm:pb-20 text-center">
             
             <!-- Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#77C440]/10 border border-[#77C440]/20 text-[#77C440] text-xs sm:text-sm font-semibold mb-6 animate-pulse">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#77C440]/10 border border-[#77C440]/20 text-[#77C440] text-xs sm:text-sm font-semibold mb-6 animate-pulse">
                 <i class="fa-solid fa-sparkles"></i> 100% Бесплатно & Open Source
             </div>
 
             <!-- Main Heading -->
-            <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight sm:leading-none">
+            <h1 class="text-3xl sm:text-6xl md:text-7xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight sm:leading-none">
                 Мощный софт. <br class="hidden sm:block"/>
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#77C440] via-[#88d450] to-emerald-400">
                     Без подписок и платных лицензий.
                 </span>
             </h1>
 
-            <p class="mt-6 text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+            <p class="mt-4 sm:mt-6 text-base sm:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
                 Компания FreeX создает и развивает открытые, надежные и полностью бесплатные аналоги топовых платных программ. Никакой рекламы, ограничений и скрытых платежей.
             </p>
 
             <!-- Action Buttons -->
-            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div class="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4">
                 <a 
                     href="#products" 
-                    class="w-full sm:w-auto px-8 py-4 rounded-xl font-extrabold text-black btn-download text-base flex items-center justify-center gap-2 shadow-lg"
+                    class="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-xl font-extrabold text-black btn-download text-base flex items-center justify-center gap-2 shadow-lg"
                 >
                     <i class="fa-solid fa-layer-group"></i> Каталог ПО
                 </a>
@@ -307,42 +396,42 @@
                     href="https://github.com/FreeX-Company" 
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="w-full sm:w-auto px-8 py-4 rounded-xl font-bold border border-zinc-800 bg-zinc-950/80 hover:bg-zinc-900 transition-all duration-200 text-base flex items-center justify-center gap-2 text-zinc-300 hover:text-white"
+                    class="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-xl font-bold border border-zinc-800 bg-zinc-950/80 hover:bg-zinc-900 transition-all duration-200 text-base flex items-center justify-center gap-2 text-zinc-300 hover:text-white"
                 >
                     <i class="fa-brands fa-github text-lg"></i> Просмотр на GitHub
                 </a>
             </div>
 
             <!-- Stats/Features Strip -->
-            <div class="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto pt-8 border-t border-zinc-900">
-                <div class="p-3 text-center">
-                    <div class="text-2xl sm:text-3xl font-black text-[#77C440]">0 ₽</div>
-                    <div class="text-xs sm:text-sm text-zinc-500 mt-1">Абсолютно бесплатно</div>
+            <div class="mt-12 sm:mt-16 grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto pt-6 sm:pt-8 border-t border-zinc-900">
+                <div class="p-2 sm:p-3 text-center">
+                    <div class="text-xl sm:text-3xl font-black text-[#77C440]">0 ₽</div>
+                    <div class="text-[10px] sm:text-sm text-zinc-500 mt-1">Абсолютно бесплатно</div>
                 </div>
-                <div class="p-3 text-center">
-                    <div class="text-2xl sm:text-3xl font-black text-white">100%</div>
-                    <div class="text-xs sm:text-sm text-zinc-500 mt-1">Приватно & Безопасно</div>
+                <div class="p-2 sm:p-3 text-center">
+                    <div class="text-xl sm:text-3xl font-black text-white">100%</div>
+                    <div class="text-[10px] sm:text-sm text-zinc-500 mt-1">Приватно & Безопасно</div>
                 </div>
-                <div class="p-3 text-center">
-                    <div class="text-2xl sm:text-3xl font-black text-[#77C440]">No-Ads</div>
-                    <div class="text-xs sm:text-sm text-zinc-500 mt-1">Без встроенной рекламы</div>
+                <div class="p-2 sm:p-3 text-center">
+                    <div class="text-xl sm:text-3xl font-black text-[#77C440]">No-Ads</div>
+                    <div class="text-[10px] sm:text-sm text-zinc-500 mt-1">Без встроенной рекламы</div>
                 </div>
             </div>
         </section>
 
         <!-- Products Section -->
-        <section id="products" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full border-t border-zinc-900">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl sm:text-5xl font-extrabold text-white">
+        <section id="products" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full border-t border-zinc-900">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-5xl font-extrabold text-white">
                     Наши <span class="text-[#77C440]">Продукты</span>
                 </h2>
-                <p class="text-zinc-400 mt-3 max-w-xl mx-auto">
+                <p class="text-zinc-400 mt-2 sm:mt-3 text-sm sm:text-base max-w-xl mx-auto">
                     Качественное программное обеспечение с заботой о пользователях и приватности
                 </p>
             </div>
 
             <!-- Search and Filter Controls -->
-            <div class="max-w-3xl mx-auto mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="max-w-3xl mx-auto mb-8 sm:mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <!-- Search Box -->
                 <div class="relative w-full md:w-80">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"></i>
@@ -350,42 +439,42 @@
                         type="text" 
                         placeholder="Поиск программ..." 
                         oninput="searchSoftware(this.value)"
-                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-zinc-800 bg-zinc-900/90 text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-[#77C440] transition-colors text-sm"
+                        class="w-full pl-10 pr-4 py-3 sm:py-2.5 rounded-xl border border-zinc-800 bg-zinc-900/90 text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-[#77C440] transition-colors text-sm"
                     >
                 </div>
 
                 <!-- Category Filters -->
-                <div class="flex flex-wrap gap-2 justify-center">
-                    <button onclick="filterSoftware('all', event)" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#77C440] text-black transition-all">
+                <div class="flex flex-wrap gap-2 justify-center w-full md:w-auto">
+                    <button onclick="filterSoftware('all', event)" class="filter-btn flex-1 md:flex-none px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#77C440] text-black transition-all">
                         Все
                     </button>
-                    <button onclick="filterSoftware('media', event)" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm bg-zinc-900 border border-zinc-800 text-zinc-400 transition-all">
+                    <button onclick="filterSoftware('media', event)" class="filter-btn flex-1 md:flex-none px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm bg-zinc-900 border border-zinc-800 text-zinc-400 transition-all">
                         Графика и Фото
                     </button>
                 </div>
             </div>
 
             <!-- Software Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 
                 <!-- Product Card: PhotoStudio -->
-                <div data-category="media" class="software-card card-gradient rounded-3xl p-6 border border-zinc-800/80 flex flex-col justify-between hover:border-[#77C440]/60 transition-all duration-300 shadow-2xl group hover:-translate-y-1">
+                <div data-category="media" class="software-card card-gradient rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-zinc-800/80 flex flex-col justify-between hover:border-[#77C440]/60 transition-all duration-300 shadow-2xl group">
                     <div>
                         <!-- Header / Badge -->
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 rounded-2xl bg-[#77C440]/10 border border-[#77C440]/20 flex items-center justify-center text-[#77C440] text-2xl group-hover:scale-110 transition-transform">
                                 <i class="fa-solid fa-camera-retro"></i>
                             </div>
-                            <span class="sw-replaces text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+                            <span class="sw-replaces text-[11px] sm:text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
                                 Аналог Photoshop
                             </span>
                         </div>
 
                         <!-- Title & Description -->
-                        <h3 class="sw-title text-2xl font-black text-white group-hover:text-[#77C440] transition-colors">
+                        <h3 class="sw-title text-xl sm:text-2xl font-black text-white group-hover:text-[#77C440] transition-colors">
                             PhotoStudio
                         </h3>
-                        <p class="sw-desc mt-3 text-zinc-400 text-sm leading-relaxed">
+                        <p class="sw-desc mt-2.5 sm:mt-3 text-zinc-400 text-xs sm:text-sm leading-relaxed">
                             Мощный графический редактор прямо в вашем браузере и на ПК. Коррекция, слои, фильтры и удобный интерфейс для обработки фотографий любой сложности.
                         </p>
 
@@ -404,14 +493,14 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="mt-8 pt-4 flex items-center gap-3 border-t border-zinc-900">
+                    <div class="mt-6 sm:mt-8 pt-4 flex items-center gap-3 border-t border-zinc-900">
                         <a 
                             href="https://freex-company.github.io/PhotoStudio/" 
                             target="_blank" 
                             rel="noopener noreferrer"
                             class="w-full py-3 px-4 rounded-xl bg-[#77C440] hover:bg-[#88d450] text-black font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-[#77C440]/20"
                         >
-                            <i class="fa-solid fa-globe"></i> Онлайн
+                            <i class="fa-solid fa-globe"></i> Открыть Онлайн
                         </a>
                     </div>
                 </div>
@@ -420,41 +509,41 @@
         </section>
 
         <!-- Why FreeX Section -->
-        <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full border-t border-zinc-900">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
+        <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full border-t border-zinc-900">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white">
                     Почему именно <span class="text-[#77C440]">FreeX</span>?
                 </h2>
-                <p class="text-zinc-400 mt-2">Наша миссия — доступность технологий для каждого человека</p>
+                <p class="text-zinc-400 mt-2 text-sm sm:text-base">Наша миссия — доступность технологий для каждого человека</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 text-center hover:border-[#77C440]/40 transition-all duration-300">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-[#77C440]/10 text-[#77C440] border border-[#77C440]/20 flex items-center justify-center text-2xl mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
+                <div class="p-5 sm:p-6 rounded-2xl bg-zinc-950 border border-zinc-900 text-center hover:border-[#77C440]/40 transition-all duration-300">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl bg-[#77C440]/10 text-[#77C440] border border-[#77C440]/20 flex items-center justify-center text-xl sm:text-2xl mb-3 sm:mb-4">
                         <i class="fa-solid fa-piggy-bank"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2 text-white">Экономия бюджета</h3>
-                    <p class="text-sm text-zinc-400 leading-relaxed">
+                    <h3 class="text-base sm:text-lg font-bold mb-2 text-white">Экономия бюджета</h3>
+                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
                         Забудьте о дорогих ежемесячных подписках. Все наши приложения распространяются абсолютно бесплатно.
                     </p>
                 </div>
 
-                <div class="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 text-center hover:border-[#77C440]/40 transition-all duration-300">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-[#77C440]/10 text-[#77C440] border border-[#77C440]/20 flex items-center justify-center text-2xl mb-4">
+                <div class="p-5 sm:p-6 rounded-2xl bg-zinc-950 border border-zinc-900 text-center hover:border-[#77C440]/40 transition-all duration-300">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl bg-[#77C440]/10 text-[#77C440] border border-[#77C440]/20 flex items-center justify-center text-xl sm:text-2xl mb-3 sm:mb-4">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2 text-white">Безопасность и Приватно</h3>
-                    <p class="text-sm text-zinc-400 leading-relaxed">
+                    <h3 class="text-base sm:text-lg font-bold mb-2 text-white">Безопасность и Приватно</h3>
+                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
                         Код программ открыт, мы не собираем личные данные и не вшиваем рекламу в дистрибутивы.
                     </p>
                 </div>
 
-                <div class="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 text-center hover:border-[#77C440]/40 transition-all duration-300">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-[#77C440]/10 text-[#77C440] border border-[#77C440]/20 flex items-center justify-center text-2xl mb-4">
+                <div class="p-5 sm:p-6 rounded-2xl bg-zinc-950 border border-zinc-900 text-center hover:border-[#77C440]/40 transition-all duration-300">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl bg-[#77C440]/10 text-[#77C440] border border-[#77C440]/20 flex items-center justify-center text-xl sm:text-2xl mb-3 sm:mb-4">
                         <i class="fa-solid fa-bolt"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2 text-white">Высокая скорость</h3>
-                    <p class="text-sm text-zinc-400 leading-relaxed">
+                    <h3 class="text-base sm:text-lg font-bold mb-2 text-white">Высокая скорость</h3>
+                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
                         Легковесные приложения без лишнего мусора запускаются мгновенно и работают даже на слабых компьютерах.
                     </p>
                 </div>
@@ -463,45 +552,45 @@
     </main>
 
     <!-- About Page Content -->
-    <main id="page-about" class="hidden relative flex-grow flex items-center justify-center px-4 py-20">
+    <main id="page-about" class="hidden relative flex-grow flex items-center justify-center px-4 py-12 sm:py-20">
         <!-- Ambient Glow Effect -->
         <div class="absolute inset-0 glow-effect pointer-events-none transition-all duration-500"></div>
 
-        <div class="relative z-10 max-w-4xl mx-auto space-y-8">
-            <div class="text-center space-y-4">
-                <span class="px-3 py-1 rounded-full bg-[#77C440]/10 border border-[#77C440]/20 text-[#77C440] text-xs font-bold uppercase tracking-wider">О компании</span>
-                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white">
+        <div class="relative z-10 max-w-4xl mx-auto space-y-6 sm:space-y-8">
+            <div class="text-center space-y-3 sm:space-y-4">
+                <span class="px-3 py-1 rounded-full bg-[#77C440]/10 border border-[#77C440]/20 text-[#77C440] text-[10px] sm:text-xs font-bold uppercase tracking-wider">О компании</span>
+                <h1 class="text-3xl sm:text-6xl font-extrabold tracking-tight text-white">
                     Мы — <span class="text-[#77C440]">FreeX</span>
                 </h1>
-                <p class="text-lg sm:text-xl text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+                <p class="text-base sm:text-xl text-zinc-300 leading-relaxed max-w-2xl mx-auto">
                     Разрабатываем качественные, бесплатные и открытые альтернативы проприетарному софту.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
-                <div class="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 space-y-3">
-                    <h3 class="text-xl font-bold text-[#77C440] flex items-center gap-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-4 sm:pt-6">
+                <div class="p-5 sm:p-6 rounded-2xl bg-zinc-950 border border-zinc-900 space-y-2.5 sm:space-y-3">
+                    <h3 class="text-lg sm:text-xl font-bold text-[#77C440] flex items-center gap-2">
                         <i class="fa-solid fa-bullseye"></i> Наша цель
                     </h3>
-                    <p class="text-zinc-400 text-sm leading-relaxed">
+                    <p class="text-zinc-400 text-xs sm:text-sm leading-relaxed">
                         Сделать профессиональные инструменты доступными для каждого: от школьников и студентов до профессионалов и фрилансеров, не заставляя их платить дорогие подписки.
                     </p>
                 </div>
 
-                <div class="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 space-y-3">
-                    <h3 class="text-xl font-bold text-[#77C440] flex items-center gap-2">
+                <div class="p-5 sm:p-6 rounded-2xl bg-zinc-950 border border-zinc-900 space-y-2.5 sm:space-y-3">
+                    <h3 class="text-lg sm:text-xl font-bold text-[#77C440] flex items-center gap-2">
                         <i class="fa-solid fa-code-branch"></i> Open Source
                     </h3>
-                    <p class="text-zinc-400 text-sm leading-relaxed">
+                    <p class="text-zinc-400 text-xs sm:text-sm leading-relaxed">
                         Все наши разработки ведутся с открытым исходным кодом. Сообщество разработчиков по всему миру помогает улучшать функционал и поддерживать безопасность.
                     </p>
                 </div>
             </div>
 
-            <div class="text-center pt-8">
+            <div class="text-center pt-6 sm:pt-8">
                 <button 
                     onclick="navigateTo('home')" 
-                    class="px-8 py-3 rounded-xl btn-download font-bold text-sm inline-flex items-center gap-2"
+                    class="w-full sm:w-auto px-8 py-3.5 rounded-xl btn-download font-bold text-sm inline-flex items-center justify-center gap-2"
                 >
                     <i class="fa-solid fa-arrow-left"></i> Вернуться к каталогу
                 </button>
@@ -513,21 +602,21 @@
     <main id="page-404" class="hidden flex-grow flex items-center justify-center px-4 py-16">
         <div class="max-w-md w-full text-center space-y-6">
             <div class="inline-block p-4 rounded-full bg-red-500/10 text-red-500 mb-2 border border-red-500/20">
-                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                 </svg>
             </div>
             
-            <h1 class="text-7xl font-extrabold tracking-widest text-zinc-700">404</h1>
-            <h2 class="text-2xl font-bold text-white">Страница не найдена</h2>
-            <p class="text-zinc-400 text-sm">
+            <h1 class="text-5xl sm:text-7xl font-extrabold tracking-widest text-zinc-700">404</h1>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">Страница не найдена</h2>
+            <p class="text-zinc-400 text-xs sm:text-sm">
                 Запрошенный адрес не существует или был перемещен.
             </p>
 
             <div class="pt-4">
                 <button 
                     onclick="navigateTo('home')" 
-                    class="px-6 py-2.5 rounded-xl border border-zinc-800 hover:bg-zinc-900 font-semibold transition-colors duration-200 text-sm text-zinc-300 hover:text-white"
+                    class="w-full sm:w-auto px-6 py-3 rounded-xl border border-zinc-800 hover:bg-zinc-900 font-semibold transition-colors duration-200 text-sm text-zinc-300 hover:text-white"
                 >
                     Вернуться на главную
                 </button>
@@ -537,8 +626,8 @@
 
     <!-- Download Modal -->
     <div id="download-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-        <div class="bg-zinc-950 border border-zinc-800 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-zinc-500 hover:text-white">
+        <div class="bg-zinc-950 border border-zinc-800 rounded-2xl max-w-md w-full p-5 sm:p-6 text-center space-y-4 shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-zinc-500 hover:text-white p-1">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
 
@@ -546,19 +635,19 @@
                 <i class="fa-solid fa-circle-down"></i>
             </div>
 
-            <h3 class="text-xl font-bold text-white">Загрузка <span id="modal-app-name" class="text-[#77C440]"></span></h3>
-            <p class="text-sm text-zinc-400">
+            <h3 class="text-lg sm:text-xl font-bold text-white">Загрузка <span id="modal-app-name" class="text-[#77C440]"></span></h3>
+            <p class="text-xs sm:text-sm text-zinc-400">
                 Загрузка с официального репозитория GitHub начнется автоматически. Выберите разрядность вашей ОС:
             </p>
 
             <div class="space-y-2 pt-2">
-                <a href="https://github.com/FreeX-Company" target="_blank" onclick="closeModal()" class="block w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-[#77C440] hover:text-black font-semibold text-sm transition-all text-zinc-200 border border-zinc-800">
+                <a href="https://github.com/FreeX-Company" target="_blank" onclick="closeModal()" class="block w-full py-3 rounded-xl bg-zinc-900 hover:bg-[#77C440] hover:text-black font-semibold text-xs sm:text-sm transition-all text-zinc-200 border border-zinc-800">
                     <i class="fa-brands fa-windows mr-2"></i> Windows (x64 / .exe)
                 </a>
-                <a href="https://github.com/FreeX-Company" target="_blank" onclick="closeModal()" class="block w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-[#77C440] hover:text-black font-semibold text-sm transition-all text-zinc-200 border border-zinc-800">
+                <a href="https://github.com/FreeX-Company" target="_blank" onclick="closeModal()" class="block w-full py-3 rounded-xl bg-zinc-900 hover:bg-[#77C440] hover:text-black font-semibold text-xs sm:text-sm transition-all text-zinc-200 border border-zinc-800">
                     <i class="fa-brands fa-apple mr-2"></i> macOS (Apple Silicon / Intel)
                 </a>
-                <a href="https://github.com/FreeX-Company" target="_blank" onclick="closeModal()" class="block w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-[#77C440] hover:text-black font-semibold text-sm transition-all text-zinc-200 border border-zinc-800">
+                <a href="https://github.com/FreeX-Company" target="_blank" onclick="closeModal()" class="block w-full py-3 rounded-xl bg-zinc-900 hover:bg-[#77C440] hover:text-black font-semibold text-xs sm:text-sm transition-all text-zinc-200 border border-zinc-800">
                     <i class="fa-brands fa-linux mr-2"></i> Linux (.AppImage / .deb)
                 </a>
             </div>
@@ -567,9 +656,10 @@
 
     <!-- Footer -->
     <footer class="border-t border-zinc-900 bg-black/80 py-6 px-4 mt-auto">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-            <div class="flex items-center gap-2">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 text-center sm:text-left">
+            <div class="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
                 <span class="font-bold text-zinc-300">FreeX Company</span>
+                <span class="hidden sm:inline">•</span>
                 <span>&copy; 2026 FreeX. Открытое и бесплатное ПО для всех.</span>
             </div>
 
